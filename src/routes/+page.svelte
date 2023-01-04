@@ -8,6 +8,7 @@
 
     function handleBoardName(){
         boardFlag = "true";
+        editedBoard = "";
     }
 
     function onKeyPress(e){
@@ -50,7 +51,7 @@
         <!-- <h1>{zoom}</h1> -->
         <div class="wrapper-1">
             <div class="board-name">
-                <div contenteditable={boardFlag} on:keypress={onKeyPress}>{editedBoard}<button on:click={handleBoardName} contenteditable="false">Edit</button></div>
+                <div contenteditable={boardFlag} placeholder="Enter your Board Name" on:keypress={onKeyPress}>{editedBoard}<button on:click={handleBoardName} contenteditable="false">Edit</button></div>
                 
             </div>
             <div class="search">
@@ -105,6 +106,11 @@
         font-size: 1.5rem;
         margin: 0rem 0.5rem;
     }
+
+    /* [contentEditable="true"]:empty:before {
+    content: attr(placeholder);
+    opacity: 0.6;
+    } */
     .board-name div button{
         /* margin-left: 1.55rem; */
         position: relative;
