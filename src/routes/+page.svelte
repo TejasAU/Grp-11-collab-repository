@@ -1,5 +1,6 @@
 <script>
     import Icon from '@iconify/svelte';
+	import StickyNotes from './StickyNotes.svelte';
 	let boardName = 'Board Name';
 	$: editedBoard = boardName;
 	let boardFlag = 'false';
@@ -78,6 +79,27 @@
         if(grabOn) penColor = "#0066ff";
         else penColor="";
     }
+	
+	let stickynotecontainer;
+	let tempIndex = 1;
+	function addNotes(event){
+		let container = document.querySelector('#sticky-notes-container');
+		let rect = container.getBoundingClientRect();
+		console.log(event.clientY,event.clientX);
+		console.log(`this is rect ${rect.top} ${rect.left}`)
+		let notesCoordinateX = (event.clientX-rect.left)/zoom;
+		let notesCoordinateY = (event.clientY-rect.top)/zoom;
+		let stickynote = new StickyNotes({
+			target: container,
+			props:{
+				top: notesCoordinateY,
+				left: notesCoordinateX,
+				content:tempIndex
+			}
+		});
+		console.log(tempIndex);
+		tempIndex++;
+	}
 </script>
 
 <head>
@@ -91,18 +113,16 @@
 	<div class="main" 
     on:mousewheel={handleZoom} 
     on:mousedown={dragStart} on:mouseup={dragEnd} on:mousemove={drag}
+	on:dblclick={addNotes}
     style="cursor:{grabOn? 'grab':''}">
         <div
+		id="sticky-notes-container"
         class="zoom"
-        style=" transform-origin:{x_coordinate}px {y_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px; "
-        >
-            <div style="display: flex; position:absolute;">
-
-                <h1>Scroll</h1>
-                <h1>Scroll</h1>
-                <h1>Drag</h1>
-                <h1>Drag</h1>
-            </div>
+        style=" transform-origin:{y_coordinate}px {x_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px; "
+        bind:this={stickynotecontainer}
+		>
+		<!-- this bellow div has to be removed later on -->
+			<div style="color: darkgrey; top:300px; left:700px; position:absolute; display:{tempIndex>1?'none':''}"><h1>Double click to add notes</h1> <br /> (Its just temporary for testing)</div>
 		</div>
 	</div>
 	<!-- <h1>{zoom}</h1> -->
@@ -156,7 +176,11 @@
         overflow: hidden;
 	}
     .zoom{
-        position: relative;
+        position: absolute;
+		top: 0;
+		left: 0;
+		/* height: 100%;
+		width: 100%; */
     }
 	.wrapper-1 {
 		padding: 0rem 1rem;
