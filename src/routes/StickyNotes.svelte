@@ -6,7 +6,9 @@
 </script>
 
 <div class="stickyNotes" style="--y_coordinate:{top}px ; --x_coordinate:{left}px">
-{content}
+    <p></p>
+    <textarea class="stickyDesc" rows="9" cols="19"></textarea>
+    <hr style="margin: 0 0 0 0 ;"/>
 </div>
 
 <style>
@@ -16,8 +18,23 @@
         /* top: 10px;
         left: 10px; */
         position: absolute;
-        width: 2rem;
-        height: 5rem;
-        background-color: red;
+        width: 10rem;
+        height: 11.5rem;
+        border-radius: 0.25rem;
+        background-color: white;
+        overflow: hidden;
+        box-shadow: 5px 5px 10px #ccc;
+    }
+    .stickyNotes:hover{
+        box-shadow: 10px 10px 20px #ccc;
+    }
+    .stickyDesc{
+        border: none;
+        /* overflow: inherit; */
+        outline: none;
+        resize: none;
+    }
+    .stickyDesc:focus{
+        box-shadow: none;
     }
 </style>
