@@ -1,6 +1,13 @@
 <script>
+	import
     import Icon from '@iconify/svelte';
 	import StickyNotes from './StickyNotes.svelte';
+	import { library, dom } from '@fortawesome/fontawesome-svg-core'
+	import { faBold, faItalic,faUnderline,faTimes } from '@fortawesome/free-solid-svg-icons'
+	library.add(faBold);
+	library.add(faItalic);
+	library.add(faUnderline);
+	library.add(faTimes);
 	let boardName = 'Board Name';
 	$: editedBoard = boardName;
 	let boardFlag = 'false';
@@ -80,25 +87,19 @@
         else penColor="";
     }
 	
-	let stickynotecontainer;
+	let stickynotecontainer = [];
+	function removeNote(coordinate){
+		stickynotecontainer = stickynotecontainer.filter(note => note.x!==coordinate.x && note.y !== coordinate.y);
+	}
 	let tempIndex = 1;
 	function addNotes(event){
 		let container = document.querySelector('#sticky-notes-container');
 		let rect = container.getBoundingClientRect();
-		console.log(event.clientY,event.clientX);
-		console.log(`this is rect ${rect.top} ${rect.left}`)
 		let notesCoordinateX = (event.clientX-rect.left)/zoom;
 		let notesCoordinateY = (event.clientY-rect.top)/zoom;
-		let stickynote = new StickyNotes({
-			target: container,
-			props:{
-				top: notesCoordinateY,
-				left: notesCoordinateX,
-				content:tempIndex
-			}
-		});
-		console.log(tempIndex);
 		tempIndex++;
+		stickynotecontainer =  stickynotecontainer.concat({x:notesCoordinateX,y:notesCoordinateY});
+		console.log(stickynotecontainer);
 	}
 </script>
 
@@ -119,10 +120,15 @@
 		id="sticky-notes-container"
         class="zoom"
         style=" transform-origin:{y_coordinate}px {x_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px; "
-        bind:this={stickynotecontainer}
 		>
-		<!-- this bellow div has to be removed later on -->
-			<div style="color: darkgrey; top:300px; left:700px; position:absolute; display:{tempIndex>1?'none':''}"><h1>Double click to add notes</h1> <br /> (Its just temporary for testing)</div>
+		{#if stickynotecontainer.length<1}
+			<!-- this bellow div has to be modified later on -->
+			<div style="color: darkgrey; top:300px; left:700px; position:absolute;"><h1>Double click to add notes</h1> <br /> (Its just temporary for testing)</div>
+		{:else}
+			{#each stickynotecontainer as notes}
+				<StickyNotes top = {notes.y} left = {notes.x}  onRemove= {removeNote}/>
+			{/each}
+		{/if}
 		</div>
 	</div>
 	<!-- <h1>{zoom}</h1> -->
