@@ -1,13 +1,16 @@
 <script>
-	import
-    import Icon from '@iconify/svelte';
+	import Icon from '@iconify/svelte';
 	import StickyNotes from './StickyNotes.svelte';
-	import { library, dom } from '@fortawesome/fontawesome-svg-core'
-	import { faBold, faItalic,faUnderline,faTimes } from '@fortawesome/free-solid-svg-icons'
+	import { library, dom } from '@fortawesome/fontawesome-svg-core';
+	import { faBold, faItalic, faUnderline, faTimes } from '@fortawesome/free-solid-svg-icons';
 	library.add(faBold);
 	library.add(faItalic);
 	library.add(faUnderline);
 	library.add(faTimes);
+
+	import { db } from '../db';
+	import { onMount,afterUpdate } from 'svelte';
+	import {v4 as uuid} from 'uuid';
 	let boardName = 'Board Name';
 	$: editedBoard = boardName;
 	let boardFlag = 'false';
@@ -50,57 +53,82 @@
 		flag = false;
 		handleClickZoom();
 	}
-    let grabOn =false;
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-    function dragStart(event) {
-        if(grabOn){
-            isDragging = true;
-            initialX = event.clientX - xOffset;
-            initialY = event.clientY - yOffset;
-            console.log(initialX, initialY)
-        }
-
-    }
-    function dragEnd(event) {
-        isDragging = false;
-    }
-    function drag(event){
-        if (grabOn && isDragging) {
-            currentX = event.clientX - initialX;
-            currentY = event.clientY - initialY;
-            
-            xOffset = currentX;
-            yOffset = currentY;
-        }
-    }
-    let penColor = ""
-    function handleGrab(){
-        grabOn = !grabOn;
-        console.log(grabOn)
-        if(grabOn) penColor = "#0066ff";
-        else penColor="";
-    }
-	
-	let stickynotecontainer = [];
-	function removeNote(coordinate){
-		stickynotecontainer = stickynotecontainer.filter(note => note.x!==coordinate.x && note.y !== coordinate.y);
+	let grabOn = false;
+	let isDragging = false;
+	let currentX;
+	let currentY;
+	let initialX;
+	let initialY;
+	let xOffset = 0;
+	let yOffset = 0;
+	function dragStart(event) {
+		if (grabOn) {
+			isDragging = true;
+			initialX = event.clientX - xOffset;
+			initialY = event.clientY - yOffset;
+			console.log(initialX, initialY);
+		}
 	}
-	let tempIndex = 1;
-	function addNotes(event){
+	function dragEnd(event) {
+		isDragging = false;
+	}
+	function drag(event) {
+		if (grabOn && isDragging) {
+			currentX = event.clientX - initialX;
+			currentY = event.clientY - initialY;
+
+			xOffset = currentX;
+			yOffset = currentY;
+		}
+	}
+	let penColor = '';
+	function handleGrab() {
+		grabOn = !grabOn;
+		console.log(grabOn);
+		if (grabOn) penColor = '#0066ff';
+		else penColor = '';
+	}
+
+	let stickynotecontainer = [];
+	// console.log(stickynotecontainer)
+	async function removeNote(id) {
+		// console.log(id)
+		try {
+			await db.notes
+				.where('id').equals(id).delete()
+				.then(() => console.log('Deleted Successfully'))
+				.catch((err) => console.log(err));
+			stickynotecontainer = await db.notes.toArray();
+		} catch (err) {
+			console.log(err);
+		}
+	}
+	async function addNotes(event) {
 		let container = document.querySelector('#sticky-notes-container');
 		let rect = container.getBoundingClientRect();
-		let notesCoordinateX = (event.clientX-rect.left)/zoom;
-		let notesCoordinateY = (event.clientY-rect.top)/zoom;
-		tempIndex++;
-		stickynotecontainer =  stickynotecontainer.concat({x:notesCoordinateX,y:notesCoordinateY});
-		console.log(stickynotecontainer);
+		let notesCoordinateX = (event.clientX - rect.left) / zoom;
+		let notesCoordinateY = (event.clientY - rect.top) / zoom;
+		let uniqueId = uuid();
+		// tempIndex++;
+		console.log(uniqueId)
+		try {
+			const note = await db.notes.add({
+				id:uniqueId,
+				x_coordinate: notesCoordinateX,
+				y_coordinate: notesCoordinateY,
+				content:''
+			});
+			stickynotecontainer = await db.notes.toArray();
+		} catch (err) {
+			console.log(err);
+		}
 	}
+
+	onMount(async () => {
+		stickynotecontainer = await db.notes.toArray();
+		console.log(stickynotecontainer)
+	});
+	// afterUpdate(()=> console.log(stickynotecontainer))
 </script>
 
 <head>
@@ -111,38 +139,51 @@
 </head>
 
 <main>
-	<div class="main" 
-    on:mousewheel={handleZoom} 
-    on:mousedown={dragStart} on:mouseup={dragEnd} on:mousemove={drag}
-	on:dblclick={addNotes}
-    style="cursor:{grabOn? 'grab':''}">
-        <div
-		id="sticky-notes-container"
-        class="zoom"
-        style=" transform-origin:{y_coordinate}px {x_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px; "
+	<div
+		class="main"
+		on:mousewheel={handleZoom}
+		on:mousedown={dragStart}
+		on:mouseup={dragEnd}
+		on:mousemove={drag}
+		on:dblclick={addNotes}
+		style="cursor:{grabOn ? 'grab' : ''}"
+	>
+		<div
+			id="sticky-notes-container"
+			class="zoom"
+			style=" transform-origin:{y_coordinate}px {x_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px; "
 		>
-		{#if stickynotecontainer.length<1}
-			<!-- this bellow div has to be modified later on -->
-			<div style="color: darkgrey; top:300px; left:700px; position:absolute;"><h1>Double click to add notes</h1> <br /> (Its just temporary for testing)</div>
-		{:else}
-			{#each stickynotecontainer as notes}
-				<StickyNotes top = {notes.y} left = {notes.x}  onRemove= {removeNote}/>
-			{/each}
-		{/if}
+			{#if stickynotecontainer.length<1}
+				<!-- this bellow div has to be modified later on -->
+				<div style="color: darkgrey; top:300px; left:700px; position:absolute;">
+					<h1>Double click to add notes</h1>
+					<br /> (Its just temporary for testing)
+				</div>
+			{:else}
+				{#each stickynotecontainer as notes}
+					<StickyNotes id={notes.id} top={notes.y_coordinate} left={notes.x_coordinate} onRemove={removeNote} content={notes.content} />
+				{/each}
+			{/if}
 		</div>
 	</div>
 	<!-- <h1>{zoom}</h1> -->
 	<div class="wrapper-1">
-        <div>
-            <div class="board-name">
-                <div contenteditable={boardFlag} placeholder="Enter your Board Name" on:keypress={onKeyPress}>
-                    {editedBoard}<button on:click={handleBoardName} contenteditable="false">Edit</button>
-                </div>
-            </div>
-            <div class="edit">
-                <button on:click={handleGrab} style="--isActive:{penColor}"><Icon icon="material-symbols:back-hand" /></button>
-            </div>
-        </div>
+		<div>
+			<div class="board-name">
+				<div
+					contenteditable={boardFlag}
+					placeholder="Enter your Board Name"
+					on:keypress={onKeyPress}
+				>
+					{editedBoard}<button on:click={handleBoardName} contenteditable="false">Edit</button>
+				</div>
+			</div>
+			<div class="edit">
+				<button on:click={handleGrab} style="--isActive:{penColor}"
+					><Icon icon="material-symbols:back-hand" /></button
+				>
+			</div>
+		</div>
 		<div class="search">
 			<div class="search-bar-wrapper">
 				<div class="search-bar">
@@ -155,7 +196,6 @@
 				</div>
 			</div>
 		</div>
-        
 	</div>
 	<div class="footer">
 		<div class="wrapper-2">
@@ -179,15 +219,15 @@
 		top: 0;
 		left: 0;
 		/* transform: scale(zoom); */
-        overflow: hidden;
+		overflow: hidden;
 	}
-    .zoom{
-        position: absolute;
+	.zoom {
+		position: absolute;
 		top: 0;
 		left: 0;
 		/* height: 100%;
 		width: 100%; */
-    }
+	}
 	.wrapper-1 {
 		padding: 0rem 1rem;
 		display: flex;
@@ -235,11 +275,11 @@
 		background: #2879eb;
 		text-decoration: none;
 	}
-    .edit{
-        position: absolute;
-    }
-    .edit button{
-        position: relative;
+	.edit {
+		position: absolute;
+	}
+	.edit button {
+		position: relative;
 		margin: 4rem 0rem 0.5rem 0rem;
 		height: fit-content;
 		-webkit-border-radius: 10;
@@ -253,8 +293,8 @@
 		padding: 0.5rem 1rem;
 		text-decoration: none;
 		font-size: 1rem;
-    }
-    /* .edit button:active{
+	}
+	/* .edit button:active{
         background: #0066ff;
     } */
 	.search {
