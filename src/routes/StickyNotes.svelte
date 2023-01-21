@@ -10,25 +10,21 @@
 	// console.log(`inside stickyNotes component ${top},${left}`);
 
 	export let content;
-	onMount(
-		async () =>
-		{
-			// console.log({'onMount':id});
-			await db.notes
-				.where('id')
-				.equals(id)
-				.first()
-				.then((data) => {
-					content = data.content;
-					// console.log(`id: ${data.id} content:${data.content}`);
-				})
+	onMount(async () => {
+		// console.log({'onMount':id});
+		await db.notes
+			.where('id')
+			.equals(id)
+			.first()
+			.then((data) => {
+				content = data.content;
+				// console.log(`id: ${data.id} content:${data.content}`);
+			});
 	});
 
-	afterUpdate(
-		async()=>{
-			await db.notes.update(id,{content:content});
-		}
-	)
+	afterUpdate(async () => {
+		await db.notes.update(id, { content: content,x_coordinate:left, y_coordinate:top });
+	});
 	// console.log(arr);
 
 	function makeBold() {
@@ -44,10 +40,32 @@
 			textarea.value.substring(end);
 		textarea.value = newText;
 	}
+
+	// let x = left;
+	// let y = top;
+	let isMouseDown = false;
+	let xOffset = 0;
+	let yOffset = 0;
+	function handleMouseMove(event) {
+		if (isMouseDown) {
+			left = event.clientX+xOffset;
+			top = event.clientY+yOffset;
+		}
+	}
+
+	function handleMouseDown(event) {
+		isMouseDown = true;
+		xOffset = left - event.clientX;
+		yOffset = top - event.clientY;
+	}
+
+	function handleMouseUp() {
+		isMouseDown = false;
+	}
 </script>
 
-<div class="stickyNotes" style="--y_coordinate:{top}px ; --x_coordinate:{left}px">
-	<p style="margin: 0; text-align:end">
+<div class="stickyNotes" style="--y_coordinate:{top}px ; --x_coordinate:{left}px" >
+	<p class ="ribbon" style="margin: 0; text-align:end" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} on:mousemove={handleMouseMove}>
 		<button class="stickyButtons" on:click={() => onRemove(id)}
 			><FontAwesomeIcon icon="times" /></button
 		>
@@ -58,7 +76,6 @@
 		rows="9"
 		cols="19"
 		placeholder="Type Here"
-		
 		bind:value={content}
 	/>
 	<hr style="margin: 0 0 0 0 ;" />
@@ -83,7 +100,9 @@
 	}
 	.stickyNotes:hover {
 		box-shadow: 10px 10px 20px #ccc;
+		z-index: 99;
 	}
+
 	.stickyDesc {
 		border: none;
 		/* overflow: inherit; */
@@ -101,5 +120,8 @@
 	}
 	.stickyButtons:hover {
 		cursor: pointer;
+	}
+	.ribbon:hover{
+		cursor:move;
 	}
 </style>
