@@ -155,12 +155,14 @@
 		on:mouseup={dragEnd}
 		on:mousemove={drag}
 		on:dblclick={addNotes}
-		style="cursor:{grabOn ? 'grab' : ''}"
+		style="cursor:{grabOn ? 'grab' : ''};"
+		
 	>
 		<div
 			id="sticky-notes-container"
 			class="zoom"
-			style=" transform-origin:{y_coordinate}px {x_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px; "
+			style=" transform-origin:{y_coordinate}px {x_coordinate}px; transform: scale({zoom}); top: {currentY}px; left:{currentX}px;  pointer-events:{grabOn? 'none': ''}"
+			
 		>
 			{#if stickynotecontainer.length<1}
 				<!-- this bellow div has to be modified later on -->
