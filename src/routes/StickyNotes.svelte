@@ -13,14 +13,14 @@
 	onMount(
 		async () =>
 		{
-			console.log({'onMount':id});
+			// console.log({'onMount':id});
 			await db.notes
 				.where('id')
 				.equals(id)
 				.first()
 				.then((data) => {
 					content = data.content;
-					console.log(`id: ${data.id} content:${data.content}`);
+					// console.log(`id: ${data.id} content:${data.content}`);
 				})
 	});
 

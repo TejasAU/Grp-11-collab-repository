@@ -11,18 +11,26 @@
 	import { db } from '../db';
 	import { onMount,afterUpdate } from 'svelte';
 	import {v4 as uuid} from 'uuid';
-	let boardName = 'Board Name';
+	import { writable } from 'svelte/store';
+	import { createEventDispatcher } from 'svelte/internal';
+	// import {nameStore} from '../boardName'
+	let boardName = '';
 	$: editedBoard = boardName;
 	let boardFlag = 'false';
-
+	let buttonstate = 'Edit';
 	function handleBoardName() {
-		boardFlag = 'true';
-		editedBoard = '';
+		boardFlag = !boardFlag;
+		if(boardFlag)
+			buttonstate = 'Save'
+		else buttonstate = 'Edit'
 	}
 
 	function onKeyPress(e) {
-		if (e.charCode === 13) {
+		if (boardFlag && e.charCode === 13) {
 			boardFlag = 'false';
+			let title = document.querySelector('#boardname').innerHTML;
+			localStorage.setItem("name",title.slice(0,title.length-68));
+			buttonstate = 'Edit';
 		}
 	}
 
@@ -125,6 +133,7 @@
 	}
 
 	onMount(async () => {
+		editedBoard = localStorage.getItem('name')||'Hello';
 		stickynotecontainer = await db.notes.toArray();
 		console.log(stickynotecontainer)
 	});
@@ -171,12 +180,14 @@
 		<div>
 			<div class="board-name">
 				<div
+					id="boardname"
 					contenteditable={boardFlag}
 					placeholder="Enter your Board Name"
 					on:keypress={onKeyPress}
+					on:click={onKeyPress}
 				>
-					{editedBoard}<button on:click={handleBoardName} contenteditable="false">Edit</button>
-				</div>
+				{editedBoard}<button on:click={handleBoardName} contenteditable="false">{buttonstate}</button>
+			</div>
 			</div>
 			<div class="edit">
 				<button on:click={handleGrab} style="--isActive:{penColor}"
