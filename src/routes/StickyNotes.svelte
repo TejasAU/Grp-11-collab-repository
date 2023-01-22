@@ -6,7 +6,7 @@
 	export let top = 100;
 	export let left = 200;
 	export let onRemove;
-
+	export let color;
 	// console.log(`inside stickyNotes component ${top},${left}`);
 
 	export let content;
@@ -64,9 +64,9 @@
 	}
 </script>
 
-<div class="stickyNotes" style="--y_coordinate:{top}px ; --x_coordinate:{left}px" >
+<div class="stickyNotes" style="--y_coordinate:{top}px ; --x_coordinate:{left}px; user-select:{isMouseDown? 'none':''}; z-index:{isMouseDown? '100':''}; background-color:{color}" >
 	<p class ="ribbon" style="margin: 0; text-align:end" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} on:mousemove={handleMouseMove}>
-		<button class="stickyButtons" on:click={() => onRemove(id)}
+		<button class="stickyButtons" on:click={() => onRemove(id)} style=" background-color:{color}"
 			><FontAwesomeIcon icon="times" /></button
 		>
 	</p>
@@ -77,11 +77,12 @@
 		cols="19"
 		placeholder="Type Here"
 		bind:value={content}
+		style=" background-color:{color}"
 	/>
 	<hr style="margin: 0 0 0 0 ;" />
-	<button class="stickyButtons" on:click={makeBold}><FontAwesomeIcon icon="bold" /></button>
-	<button class="stickyButtons"><FontAwesomeIcon icon="italic" /></button>
-	<button class="stickyButtons"><FontAwesomeIcon icon="underline" /></button>
+	<button class="stickyButtons" on:click={makeBold} style=" background-color:{color}"><FontAwesomeIcon icon="bold" /></button>
+	<button class="stickyButtons" style=" background-color:{color}"><FontAwesomeIcon icon="italic" /></button>
+	<button class="stickyButtons" style=" background-color:{color}"><FontAwesomeIcon icon="underline" /></button>
 </div>
 
 <style>
