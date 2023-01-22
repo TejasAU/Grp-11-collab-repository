@@ -11,8 +11,6 @@
 	import { db } from '../db';
 	import { onMount,afterUpdate } from 'svelte';
 	import {v4 as uuid} from 'uuid';
-	import { writable } from 'svelte/store';
-	import { createEventDispatcher } from 'svelte/internal';
 	// import {nameStore} from '../boardName'
 	let boardName = '';
 	$: editedBoard = boardName;
@@ -137,7 +135,28 @@
 		stickynotecontainer = await db.notes.toArray();
 		console.log(stickynotecontainer)
 	});
-	// afterUpdate(()=> console.log(stickynotecontainer))
+
+	// Search Functionality
+	let searchText="";
+	let filteredText = [];
+	async function search(){
+		if(searchText.length>0){
+			filteredText = await db.notes.filter(text =>{
+				return text.content.includes(searchText);
+			}).toArray();
+			console.log('Inside search');
+			console.log(filteredText);	
+		}
+		else{
+			filteredText = [];
+		}
+	}
+	
+	afterUpdate(()=>{
+		// filteredText = [];
+	})
+
+
 </script>
 
 <head>
@@ -172,7 +191,7 @@
 				</div>
 			{:else}
 				{#each stickynotecontainer as notes}
-					<StickyNotes id={notes.id} top={notes.y_coordinate} left={notes.x_coordinate} onRemove={removeNote} content={notes.content} />
+					<StickyNotes id={notes.id} top={notes.y_coordinate} left={notes.x_coordinate} onRemove={removeNote} content={notes.content} color={filteredText.find(text => text.id === notes.id)?'#21ff5c':'white'}/>
 				{/each}
 			{/if}
 		</div>
@@ -205,6 +224,8 @@
 						placeholder="  &#xf002; Search"
 						name="search"
 						style="font-family: FontAwesome;"
+						bind:value={searchText}
+						on:input={search}
 					/>
 				</div>
 			</div>
@@ -224,8 +245,8 @@
 		background-color: #f3f3f3;
 	}
 	.main {
-		height: 100vh;
-		width: 100vw;
+		height: 100%;
+		width: 100%;
 		display: grid;
 		place-items: center;
 		position: fixed;
