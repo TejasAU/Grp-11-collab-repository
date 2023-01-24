@@ -195,7 +195,6 @@
 			{/if}
 		</div>
 	</div>
-	<!-- <h1>{zoom}</h1> -->
 	<div class="wrapper-1">
 		<div>
 			<div class="board-name">
@@ -206,15 +205,11 @@
 					on:keypress={onKeyPress}
 					on:click={onKeyPress}
 				>
-				{editedBoard}<button on:click={handleBoardName} contenteditable="false">{buttonstate}</button>
+					{editedBoard}<button on:click={handleBoardName} contenteditable="false">{buttonstate}</button>
+				</div>
 			</div>
 			</div>
-			<div class="edit">
-				<button on:click={handleGrab} style="--isActive:{penColor}"
-					><Icon icon="material-symbols:back-hand" /></button
-				>
-			</div>
-		</div>
+			
 		<div class="search">
 			<div class="search-bar-wrapper">
 				<div class="search-bar">
@@ -229,6 +224,10 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="edit">
+		<button on:click={handleGrab} style="--isActive:{penColor}"
+		><Icon icon="material-symbols:back-hand" /></button>
 	</div>
 	<div class="footer">
 		<div class="wrapper-2">
@@ -267,6 +266,13 @@
 		justify-content: space-between;
 		/* position: absolute; */
 		/* z-index: 10; */
+	}
+	@media (max-width:600px){
+		.wrapper-1{
+			flex-direction: column;
+			text-align: center;
+			align-items: center;
+		}
 	}
 	.board-name {
 		position: relative;
@@ -315,6 +321,7 @@
 	}
 	.edit {
 		position: absolute;
+		left: 1.5rem;
 	}
 	.edit button {
 		position: relative;

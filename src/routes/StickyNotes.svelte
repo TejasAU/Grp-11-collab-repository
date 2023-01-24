@@ -7,42 +7,34 @@
 	export let left = 200;
 	export let onRemove;
 	export let color;
-	// console.log(`inside stickyNotes component ${top},${left}`);
 
 	export let content;
 	onMount(async () => {
-		// console.log({'onMount':id});
 		await db.notes
 			.where('id')
 			.equals(id)
 			.first()
 			.then((data) => {
 				content = data.content;
-				// console.log(`id: ${data.id} content:${data.content}`);
 			});
 	});
 
 	afterUpdate(async () => {
 		await db.notes.update(id, { content: content,x_coordinate:left, y_coordinate:top });
 	});
-	// console.log(arr);
-
 	function makeBold() {
-		var textarea = document.getElementById('Description');
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
-		var selectedText = textarea.value.substring(start, end);
-		var newText =
-			textarea.value.substring(0, start) +
-			'<b>' +
-			selectedText +
-			'</b>' +
-			textarea.value.substring(end);
-		textarea.value = newText;
+		// var textarea = document.getElementById('Description');
+		// var start = textarea.selectionStart;
+		// var end = textarea.selectionEnd;
+		// var selectedText = textarea.value.substring(start, end);
+		// var newText =
+		// 	textarea.value.substring(0, start) +
+		// 	'<b>' +
+		// 	selectedText +
+		// 	'</b>' +
+		// 	textarea.value.substring(end);
+		// textarea.value = newText;
 	}
-
-	// let x = left;
-	// let y = top;
 	let isMouseDown = false;
 	let xOffset = 0;
 	let yOffset = 0;
@@ -89,11 +81,9 @@
 	.stickyNotes {
 		top: var(--y_coordinate);
 		left: var(--x_coordinate);
-		/* top: 10px;
-        left: 10px; */
 		position: absolute;
 		width: 10rem;
-		height: 11.5rem;
+		height: 12rem;
 		border-radius: 0.25rem;
 		background-color: white;
 		overflow: hidden;
@@ -106,7 +96,6 @@
 
 	.stickyDesc {
 		border: none;
-		/* overflow: inherit; */
 		outline: none;
 		resize: none;
 		font-family: 'Arial', sans-serif;
