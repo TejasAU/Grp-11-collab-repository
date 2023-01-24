@@ -185,9 +185,8 @@
 		>
 			{#if stickynotecontainer.length<1}
 				<!-- this bellow div has to be modified later on -->
-				<div style="color: darkgrey; top:300px; left:700px; position:absolute;">
-					<h1>Double click to add notes</h1>
-					<br /> (Its just temporary for testing)
+				<div style="color: darkgrey; font-family: Arial; top:300px; left:850px; text-align: center; position:absolute;">
+					<h1>Double click here to add notes</h1>
 				</div>
 			{:else}
 				{#each stickynotecontainer as notes}
@@ -221,9 +220,9 @@
 				<div class="search-bar">
 					<input
 						type="text"
-						placeholder="  &#xf002; Search"
+						placeholder="  &#xf002;  Search"
 						name="search"
-						style="font-family: FontAwesome;"
+						style="font-family: FontAwesome, 'Arial';"
 						bind:value={searchText}
 						on:input={search}
 					/>
@@ -273,11 +272,16 @@
 		position: relative;
 		margin: 0rem;
 		width: fit-content;
-		font-weight: bold;
+		font-family: 'Arial', sans-serif;
+		padding-left: 4px;
+		font-weight:normal;
 		background-color: #ffffff;
 		border: none;
+		font-weight: bold;
 		border-radius: 1rem;
 		margin: 2rem 0rem;
+		box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.11);
+		border-radius: 8px;
 	}
 	.board-name div {
 		font-size: 1.5rem;
@@ -342,6 +346,9 @@
 		height: fit-content;
 		background-color: rgb(255, 255, 255);
 		border-radius: 0.5rem;
+		box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.11);
+		border-radius: 8px;
+		
 	}
 	.search-bar input[type='text'] {
 		width: 300px;
@@ -356,6 +363,7 @@
 		border-radius: 8px;
 		float: right;
 		margin: 7px;
+		
 	}
 	.footer {
 		position: absolute;
@@ -365,6 +373,7 @@
 	.wrapper-2 {
 		display: flex;
 		justify-content: space-around;
+		font-family: Arial;
 	}
 	.wrapper-2 button {
 		position: relative;
@@ -390,7 +399,10 @@
 		display: grid;
 		place-items: center;
 		border-radius: 0.5rem;
+		padding: 0.5rem 0.5rem;
 		background-color: #ffffff;
 		border: solid #eeeeee 1px;
+		box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.11);
+		border-radius: 8px;
 	}
 </style>
