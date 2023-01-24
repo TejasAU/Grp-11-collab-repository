@@ -109,6 +109,7 @@
 		/* overflow: inherit; */
 		outline: none;
 		resize: none;
+		font-family: 'Arial', sans-serif;
 	}
 	.stickyDesc:focus {
 		box-shadow: none;
