@@ -166,14 +166,14 @@
 		>
 			{#if stickynotecontainer.length<1}
 				<!-- this bellow div has to be modified later on -->
-				<div style="color: darkgrey; top:300px; left:700px; position:absolute;">
-					<h1>Double click to add notes</h1>
-					<br /> (Its just temporary for testing)
+				<div class = "box">
+					<h1>Double click to add notes!</h1>
+					<center>(Its just temporary for testing)</center>
 				</div>
 			{:else}
 				{#each stickynotecontainer as notes}
 					<StickyNotes id={notes.id} top={notes.y_coordinate} left={notes.x_coordinate} onRemove={removeNote} content={notes.content} />
-				{/each}
+				{/each}	
 			{/if}
 		</div>
 	</div>
@@ -200,15 +200,9 @@
 		<div class="search">
 			<div class="search-bar-wrapper">
 				<div class="search-bar">
-					<input
-						type="text"
-						placeholder="  &#xf002; Search"
-						name="search"
-						style="font-family: FontAwesome;"
-					/>
+					<input type="text" placeholder="  &#xf002; Search" name="search" style="font-family: FontAwesome;">
 				</div>
 			</div>
-		</div>
 	</div>
 	<div class="footer">
 		<div class="wrapper-2">
@@ -310,32 +304,8 @@
 	/* .edit button:active{
         background: #0066ff;
     } */
-	.search {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-	}
-	.search-bar-wrapper {
-		width: fit-content;
-		height: fit-content;
-		background-color: rgb(255, 255, 255);
-		border-radius: 0.5rem;
-	}
-	.search-bar input[type='text'] {
-		width: 300px;
-		height: 25px;
-		border-radius: 8px;
-		border: none;
-		padding: 0.2rem;
-	}
 
-	.search-bar {
-		border: solid rgb(208, 208, 208) 0.1rem;
-		border-radius: 8px;
-		float: right;
-		margin: 7px;
-	}
+
 	.footer {
 		position: absolute;
 		right: 1rem;
@@ -365,11 +335,56 @@
 		background: #2879eb;
 		text-decoration: none;
 	}
-	.size {
+	.size 
+	{
 		display: grid;
 		place-items: center;
 		border-radius: 0.5rem;
 		background-color: #ffffff;
 		border: solid #eeeeee 1px;
 	}
+	.box
+	{
+		border: 2px black;
+		color: black;
+		display: block;
+		align-items: center;
+		padding: 291px 570px;
+	}
+	
+	.search 
+	{
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		padding-left: 6px;
+	}
+
+	.search-bar-wrapper 
+	{
+		width: fit-content;
+		height: fit-content;
+		background-color: rgb(255, 255, 255);
+		border-radius: 0.5rem;
+	}
+
+	.search-bar input[type='text'] 
+	{
+		font-size: 15px;
+		width: 300px;
+		height: 25px;
+		border-radius: 8px;
+		border: none;
+		padding: 0.5rem;
+	}
+
+	.search-bar 
+	{
+		border: solid grey 0.1rem;
+		border-radius: 8px;
+		float: right;
+		margin: 7px;
+	}
+
 </style>
